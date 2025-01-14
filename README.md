@@ -1,5 +1,5 @@
-# Diffusers_Benchmark：使用Diffusers编写的AI绘画Benchmark
-## 使用方法
+## Diffusers_Benchmark：使用Diffusers编写的AI绘画Benchmark
+### 使用方法
 #### 1 安装diffusers
 N卡用户在安装好Python后，运行：`pip install diffusers["torch"] transformers`
   
@@ -23,8 +23,8 @@ A卡相对复杂一些，参考：https://zhuanlan.zhihu.com/p/11572902441
 
 进度条最后的it/s就是运行速度
 
-# ollama_test：基于OLLAMA的LLM推理Benchmark
-## 使用方法
+## ollama_test：基于OLLAMA的LLM推理Benchmark
+### 使用方法
 #### 1 安装OLLAMA
 在这里下载安装即可：https://ollama.com/
 
