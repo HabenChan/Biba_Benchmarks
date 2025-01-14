@@ -3,7 +3,9 @@
 #### 1 安装diffusers
 N卡用户在安装好Python后，运行：`pip install diffusers["torch"] transformers`
   
-A卡相对复杂一些，先配置ROCm+WSL+Torch（参考：https://zhuanlan.zhihu.com/p/11572902441），再`pip install diffusers["torch"] transformers`
+A卡相对复杂一些，要先配置ROCm+WSL+Torch，参考：https://zhuanlan.zhihu.com/p/11572902441
+
+然后再`pip install diffusers["torch"] transformers`
 
 安装完成后在对应Python环境的Prompt里用`python3 -c 'import torch; print(torch.cuda.is_available())'`验证安装，出现True则安装成功
 
