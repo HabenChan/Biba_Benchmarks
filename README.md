@@ -17,6 +17,10 @@ A卡相对复杂一些，参考：https://zhuanlan.zhihu.com/p/11572902441
 
 如果你没有本地模型，那么把代码中的`./anything-v5`改成`stablediffusionapi/anything-v5`和`./stable-diffusion-x4-upscaler`改成`stabilityai/stable-diffusion-x4-upscaler`即可
 
+注意本地模型要是diffusers的文件格式，不然读不了，模型可以是safetensors也可以是bin
+
+如果使用bin文件，会报警告找不到safetensors，但一样可以加载
+
 #### 4 运行Diffusers_Benchmark
 
 在Jupyter Notebook的网页中打开本项目里的Diffusers_Benchmark.ipynb，依次运行（选中代码框，Shift+Enter）即可
