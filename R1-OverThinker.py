@@ -11,7 +11,7 @@ model = AutoModelForCausalLM.from_pretrained(checkpoint,
                                              torch_dtype=torch.bfloat16,
                                              device_map="auto")
 
-def predict(message, history, min_thinking_tokens=1000):
+def predict(message, history, min_thinking_tokens=100):
     tokens = tokenizer.apply_chat_template(
         [
             {"role": "user", "content": message},
@@ -37,7 +37,7 @@ def predict(message, history, min_thinking_tokens=1000):
             next_token in (end_think_token, model.config.eos_token_id)
             and n_thinking_tokens < min_thinking_tokens
         ):
-            replacement = random.choice(["\n不对", "\n但是"])
+            replacement = random.choice(["\n不对，让我重新分析一下", "\n让我重新思考一下"])
             answer += replacement
             yield answer
             replacement_tokens = tokenizer.encode(replacement)
@@ -51,6 +51,7 @@ def predict(message, history, min_thinking_tokens=1000):
             n_thinking_tokens += 1
             tokens = torch.tensor([[next_token]]).to(tokens.device)
 
-demo = gr.ChatInterface(predict, type="messages")
+demo = gr.ChatInterface(predict, 
+                        type="messages")
 
 demo.launch()
