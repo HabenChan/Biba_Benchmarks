@@ -1,34 +1,29 @@
-# Idea From：https://gist.github.com/vgel/8a2497dc45b1ded33287fa7bb6cc1adc#file-r1-py
-import argparse
-import random
-import sys
 from transformers import AutoModelForCausalLM, AutoTokenizer, DynamicCache
+import gradio as gr
 import torch
+import random
 
-tokenizer = AutoTokenizer.from_pretrained("deepseek-ai/DeepSeek-R1-Distill-Qwen-7B")
-model = AutoModelForCausalLM.from_pretrained(
-    "deepseek-ai/DeepSeek-R1-Distill-Qwen-7B", 
-    torch_dtype=torch.bfloat16, 
-    device_map="auto"
-)
+checkpoint = "./DeepSeek-R1-Distill-Qwen-1.5B"
+tokenizer = AutoTokenizer.from_pretrained(checkpoint)
+model = AutoModelForCausalLM.from_pretrained(checkpoint,
+                                             torch_dtype=torch.bfloat16,
+                                             device_map="auto")
 
-_, _start_think_token, end_think_token = tokenizer.encode("<think></think>")
-
-@torch.inference_mode
-def reasoning_effort(question: str, min_thinking_tokens: int):
+def predict(message, history, min_thinking_tokens=1000):
     tokens = tokenizer.apply_chat_template(
         [
-            {"role": "user", "content": question},
+            {"role": "user", "content": message},
             {"role": "assistant", "content": "<think>\n"},
         ],
         continue_final_message=True,
         return_tensors="pt",
     )
     tokens = tokens.to(model.device)
-    kv = DynamicCache()
     n_thinking_tokens = 0
+    kv = DynamicCache()
+    _, _start_think_token, end_think_token = tokenizer.encode("<think></think>")
+    answer = ''
 
-    yield tokenizer.decode(list(tokens[0]))
     while True:
         out = model(input_ids=tokens, past_key_values=kv, use_cache=True)
         next_token = torch.multinomial(
@@ -40,17 +35,20 @@ def reasoning_effort(question: str, min_thinking_tokens: int):
             next_token in (end_think_token, model.config.eos_token_id)
             and n_thinking_tokens < min_thinking_tokens
         ):
-            replacement = random.choice(["\n然而", "\n所以", "\n因此"])
-            yield replacement
+            replacement = random.choice(["\n不对", "\n但是"])
+            answer += replacement
+            yield answer
             replacement_tokens = tokenizer.encode(replacement)
             n_thinking_tokens += len(replacement_tokens)
             tokens = torch.tensor([replacement_tokens]).to(tokens.device)
         elif next_token == model.config.eos_token_id:
             break
         else:
-            yield tokenizer.decode([next_token])
+            answer += tokenizer.decode([next_token])
+            yield answer
             n_thinking_tokens += 1
             tokens = torch.tensor([[next_token]]).to(tokens.device)
 
-for chunk in reasoning_effort("猪王是不是世界上最帅的人？", 99999):
-    print(chunk, end="", flush=True)
+demo = gr.ChatInterface(predict, type="messages")
+
+demo.launch()
