@@ -1,3 +1,5 @@
+# Idea From：https://gist.github.com/vgel/8a2497dc45b1ded33287fa7bb6cc1adc#file-r1-py
+
 from transformers import AutoModelForCausalLM, AutoTokenizer, DynamicCache
 import gradio as gr
 import torch
