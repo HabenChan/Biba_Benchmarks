@@ -43,3 +43,21 @@ Windows用户直接运行OLLAMA，任务栏有图标就可以了
 注意跑的过程中不要过0点，否则算的时间是错的
 
 统计一下生成了多少tokens，除以相应的秒数，就可以得到一秒生成多少tokens了
+
+## R1-OverThinker：强制让你的DeepSeek R1继续思考
+Idea From：https://gist.github.com/vgel/8a2497dc45b1ded33287fa7bb6cc1adc#file-r1-py
+### 使用方法
+#### 1 配置Python环境
+需要torch、transformers、gradio和random这4个包
+
+#### 2 修改参数
+打开R1-OverThinker.py，有以下几个项目可以修改：
+
+1、第8行的模型名称/路径
+
+2、第14行的最小思考token数（min_thinking_tokens）
+
+3、第40行的替换token（random.choice(["\n不对，让我重新分析一下", "\n让我重新思考一下"])
+
+#### 3 运行
+运行`python R1-OverThinker.py`，然后浏览器打开`127.0.0.1:7860`
